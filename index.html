@@ -6,7 +6,7 @@
   <meta name="description" content="M-Cook giúp trẻ học tiếng Anh qua kỹ năng sống trong trải nghiệm thực tế, có chương trình và đồng hành chuyên môn.">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="payment.css">
 </head>
 <body>
 <header class="site-header"><a href="#top" class="brand"><img src="assets/mcook-logo.png" alt="M-Cook Taste the language"></a><a class="header-link" href="#booking">Đặt lịch trao đổi 30 phút</a></header>
@@ -26,5 +26,9 @@
 <script>
 const form=document.getElementById('registration-form');const panel=document.getElementById('payment-panel');const msg=document.getElementById('form-message');
 form.addEventListener('submit',async(e)=>{e.preventDefault();msg.textContent='Đang tạo mã đăng ký…';const data=Object.fromEntries(new FormData(form));try{const r=await fetch('/api/registrations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});const d=await r.json();if(!r.ok)throw new Error(d.error||'Không thể tạo đăng ký');document.getElementById('payment-code').textContent=d.code;document.getElementById('payment-qr').src=d.qrUrl;panel.hidden=false;form.hidden=true;msg.textContent='';const timer=setInterval(async()=>{const s=await fetch('/api/registrations/'+encodeURIComponent(d.code)+'/status').then(x=>x.json());if(s.status==='paid'){document.getElementById('payment-status').textContent='Đã nhận thanh toán. Chúng tôi sẽ liên hệ với bạn.';clearInterval(timer)}},4000)}catch(err){msg.textContent=err.message}});
+</script>
+<script>
+const paymentQr=document.getElementById('payment-qr');
+if(paymentQr){paymentQr.addEventListener('error',()=>{if(!paymentQr.dataset.fallback){paymentQr.dataset.fallback='1';paymentQr.src='assets/qr-vietqr-sepay.png';}});}
 </script>
 </body></html>
