@@ -1,0 +1,2 @@
+function json(body,status=200){return new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json'}})}
+export default async function handler(req){const code=req.url.split('/').filter(Boolean).pop();const r=await fetch(`${process.env.SUPABASE_URL}/rest/v1/registrations?code=eq.${encodeURIComponent(code)}&select=status,paid_at`,{headers:{apikey:process.env.SUPABASE_SERVICE_ROLE_KEY,Authorization:`Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`}});const rows=await r.json();return rows[0]?json(rows[0]):json({error:'Not found'},404)}
